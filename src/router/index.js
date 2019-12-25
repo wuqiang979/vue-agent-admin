@@ -64,6 +64,13 @@ export const constantRoutes = [
         name: 'site',
         component: () => import('@/views/cdn/index'),
         meta: { title: '域名转发', icon: 'form' }
+      },
+      {
+        path: 'add-cdn',
+        name: 'addCdn',
+        component: () => import('@/views/cdn/AddCdn'),
+        meta: { title: '添加转发', icon: 'form' },
+        hidden: true
       }
     ]
   },

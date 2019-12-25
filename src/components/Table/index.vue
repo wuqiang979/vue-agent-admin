@@ -1,6 +1,7 @@
 <template>
   <section>
     <el-table
+      size="small"
       :data="tableData"
       element-loading-text="Loading"
       fit

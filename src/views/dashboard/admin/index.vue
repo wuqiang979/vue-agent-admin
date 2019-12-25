@@ -1,40 +1,85 @@
 <template>
   <div class="dashboard-editor-container">
-    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+    <panel-group />
+    <el-card title="123">
+      <div slot="header">
+        <span>即将到期用户</span>
+      </div>
+      <Table
+        :table-data="list"
+        :table-columns="tableColumns"
+        :current-page="formData.page_index"
+        :page-size="formData.page_number"
+        :total-page="formData.totalPage"
+      >
+        <el-table-column slot="operate" label="操作" align="center">
+          <template slot-scope="{ row }">
+            <el-button type="warning" size="mini" @click="openDialog(0,row.userId)">停用</el-button>
+            <el-button type="danger" size="mini" @click="openDialog(1,row.userId)">删除</el-button>
+          </template>
+        </el-table-column>
+      </Table>
+    </el-card>
   </div>
 </template>
 
 <script>
+import { getList } from '@/api/table'
 import PanelGroup from './components/PanelGroup'
-
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+import Table from '@/components/Table'
 
 export default {
   name: 'DashboardAdmin',
   components: {
-    PanelGroup
+    PanelGroup,
+    Table
   },
   data() {
     return {
-      lineChartData: lineChartData.newVisitis
+      list: [],
+      formData: {
+        page_index: 1,
+        page_number: 10,
+        totalPage: 0
+      },
+      tableColumns: [
+        {
+          type: 'index',
+          label: '序号',
+          width: '95'
+        },
+        {
+          label: '集群',
+          prop: 'title'
+        },
+        {
+          label: '域名',
+          prop: 'author'
+        },
+        {
+          label: '跳转地址',
+          prop: 'pageviews'
+        },
+        {
+          label: '所属分组',
+          prop: 'status'
+        },
+        {
+          label: '创建时间',
+          prop: 'display_time'
+        },
+        {
+          slot: 'operate'
+        }
+      ]
     }
+  },
+  created() {
+    getList().then(response => {
+      this.list = response.data.items.slice(0, 10)
+      this.formData.totalPage = response.data.items.length
+      this.listLoading = false
+    })
   },
   methods: {
     handleSetLineChartData(type) {
@@ -64,7 +109,7 @@ export default {
   }
 }
 
-@media (max-width:1024px) {
+@media (max-width: 1024px) {
   .chart-wrapper {
     padding: 8px;
   }

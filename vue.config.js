@@ -49,6 +49,17 @@ module.exports = {
     },
     after: require('./mock/mock-server.js')
   },
+  css: {
+    modules: false,
+    loaderOptions: {
+      sass: {
+        // 设置css中引用文件的路径，引入通用使用的scss文件（如包含的@mixin）
+        data: `
+          @import "@/styles/mixin.scss";
+        `
+      }
+    }
+  },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
