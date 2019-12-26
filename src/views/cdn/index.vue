@@ -51,6 +51,10 @@
           </el-form-item>
         </el-form>
       </div>
+      <div class="operate-box">
+        <el-button size="medium" type="danger" @click="deleteMany">批量删除</el-button>
+        <el-button size="medium" type="warning" @click="showSetGroup=true">设置分组</el-button>
+      </div>
       <Table
         :table-data="list"
         :table-columns="tableColumns"
@@ -58,26 +62,35 @@
         :page-size="formData.page_number"
         :total-page="formData.totalPage"
       >
-        <el-table-column slot="operate" label="操作" align="center">
+        <el-table-column slot="operate" label="操作" width="300" align="center">
           <template slot-scope="{ row }">
-            <el-button type="warning" size="mini" @click="openDialog(0,row.userId)">停用</el-button>
-            <el-button type="danger" size="mini" @click="openDialog(1,row.userId)">删除</el-button>
+            <el-button type="success" size="mini" @click="$router.push('edit-cdn/1')">配置</el-button>
+            <el-button type="warning" size="mini" @click="showStopCdn=true">停用</el-button>
+            <el-button type="danger" size="mini">删除</el-button>
           </template>
         </el-table-column>
       </Table>
     </el-card>
+    <StopCdn :show.sync="showStopCdn" />
+    <SetGroup :show.sync="showSetGroup" />
   </div>
 </template>
 
 <script>
 import { getList } from '@/api/table'
 import Table from '@/components/Table'
+import StopCdn from './dialog/StopCdn'
+import SetGroup from './dialog/SetGroup'
 export default {
   components: {
-    Table
+    Table,
+    StopCdn,
+    SetGroup
   },
   data() {
     return {
+      showStopCdn: false,
+      showSetGroup: false,
       pickerOptions: {
         shortcuts: [
           {
@@ -128,8 +141,7 @@ export default {
       list: [],
       tableColumns: [
         {
-          type: 'index',
-          label: '序号',
+          type: 'selection',
           width: '95'
         },
         {
@@ -178,15 +190,49 @@ export default {
         message: 'cancel!',
         type: 'warning'
       })
+    },
+    deleteMany() {
+      this.$confirm('你将要批量删除选中的内容，操作不可恢复确认吗?', '操作提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            instance.confirmButtonText = '执行中...'
+            setTimeout(() => {
+              done()
+              setTimeout(() => {
+                instance.confirmButtonLoading = false
+              }, 300)
+            }, 3000)
+          } else {
+            done()
+          }
+        }
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.flex-box{
+.flex-box {
   margin-bottom: 20px;
   @include flex(flex-end);
+}
+.operate-box {
+  margin-bottom: 20px;
 }
 </style>
 

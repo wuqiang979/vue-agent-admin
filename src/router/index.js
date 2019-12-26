@@ -71,6 +71,13 @@ export const constantRoutes = [
         component: () => import('@/views/cdn/AddCdn'),
         meta: { title: '添加转发', icon: 'form' },
         hidden: true
+      },
+      {
+        path: 'edit-cdn/:id',
+        name: 'editCdn',
+        component: () => import('@/views/cdn/EditCdn'),
+        meta: { title: '转发配置', icon: 'form' },
+        hidden: true
       }
     ]
   },

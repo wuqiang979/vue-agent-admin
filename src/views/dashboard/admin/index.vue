@@ -3,7 +3,7 @@
     <panel-group />
     <el-card title="123">
       <div slot="header">
-        <span>即将到期用户</span>
+        <span>{{ $t("home.title") }}</span>
       </div>
       <Table
         :table-data="list"
