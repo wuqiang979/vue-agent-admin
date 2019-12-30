@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
 import AddGroup from './dialog/AddGroup.vue'
 import AddCdns from './dialog/AddCdns.vue'
 export default {
@@ -54,50 +53,15 @@ export default {
         totalPage: 0,
         name: '',
         region: false
-      },
-      list: [],
-      tableColumns: [
-        {
-          type: 'index',
-          label: '序号',
-          width: '95'
-        },
-        {
-          label: '集群',
-          prop: 'title'
-        },
-        {
-          label: '域名',
-          prop: 'author'
-        },
-        {
-          label: '跳转地址',
-          prop: 'pageviews'
-        },
-        {
-          label: '所属分组',
-          prop: 'status'
-        },
-        {
-          label: '创建时间',
-          prop: 'display_time'
-        },
-        {
-          label: '状态',
-          prop: 'display_time'
-        },
-        {
-          slot: 'operate'
-        }
-      ]
+      }
     }
   },
   created() {
-    getList().then(res => {
-      this.list = res.data.items.slice(0, 10)
-      this.formData.totalPage = res.data.items.length
-      this.listLoading = false
-    })
+    // getList().then(res => {
+    //   this.list = res.data.items.slice(0, 10)
+    //   this.formData.totalPage = res.data.items.length
+    //   this.listLoading = false
+    // })
   },
   methods: {
     onSubmit() {

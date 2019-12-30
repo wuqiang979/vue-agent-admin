@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
     <panel-group />
-    <el-card title="123">
+    <el-card>
       <div slot="header">
         <span>{{ $t("home.title") }}</span>
       </div>
@@ -75,15 +75,15 @@ export default {
     }
   },
   created() {
-    getList().then(response => {
-      this.list = response.data.items.slice(0, 10)
-      this.formData.totalPage = response.data.items.length
-      this.listLoading = false
-    })
+    // getList().then(response => {
+    //   this.list = response.data.items.slice(0, 10)
+    //   this.formData.totalPage = response.data.items.length
+    //   this.listLoading = false
+    // })
   },
   methods: {
     handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+      // this.lineChartData = lineChartData[type]
     }
   }
 }

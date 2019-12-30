@@ -102,13 +102,21 @@ export const constantRoutes = [
         name: 'list',
         component: () => import('@/views/user/index'),
         meta: { title: '用户管理', icon: 'example' }
+      },
+      {
+        path: 'account-info',
+        name: 'accountInfo',
+        component: () => import('@/views/user/AccountInfo'),
+        meta: { title: '账号信息', icon: 'tree' },
+        hidden: true
+      },
+      {
+        path: 'modify-psd',
+        name: 'modifyPsd',
+        component: () => import('@/views/user/ModifyPsd'),
+        meta: { title: '修改密码', icon: 'tree' },
+        hidden: true
       }
-      // {
-      //   path: 'tree',
-      //   name: 'Tree',
-      //   component: () => import('@/views/tree/index'),
-      //   meta: { title: 'Tree', icon: 'tree' }
-      // }
     ]
   },
 

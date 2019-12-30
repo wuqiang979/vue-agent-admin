@@ -87,11 +87,11 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
-        this.formData.totalPage = response.data.items.length
-        this.listLoading = false
-      })
+      // getList().then(response => {
+      //   this.list = response.data.items
+      //   this.formData.totalPage = response.data.items.length
+      //   this.listLoading = false
+      // })
     },
     handleSizeChange(pageNum) {
 

@@ -37,17 +37,27 @@ module.exports = {
       errors: true
     },
     proxy: {
-      // change xxx-api/login => mock/login
-      // detail: https://cli.vuejs.org/config/#devserver-proxy
-      [process.env.VUE_APP_BASE_API]: {
-        target: `http://127.0.0.1:${port}/mock`,
+      '/api': {
+        target: 'http://103.40.20.195:8000',
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: ''
+          '^/api': ''
         }
       }
-    },
-    after: require('./mock/mock-server.js')
+    }
+    // proxy: {
+    //   // change xxx-api/login => mock/login
+    //   // detail: https://cli.vuejs.org/config/#devserver-proxy
+    //   '/api': {
+    //     // target: `http://127.0.0.1:${port}/mock`,
+    //     changeOrigin: true,
+    //     ws: true,
+    //     pathRewrite: {
+    //       '^/api': ''
+    //     }
+    //   }
+    // }
+    // after: require('./mock/mock-server.js')
   },
   css: {
     modules: false,

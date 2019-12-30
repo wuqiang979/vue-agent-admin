@@ -132,11 +132,11 @@ export default {
     }
   },
   created() {
-    getList().then(res => {
-      this.list = res.data.items.slice(0, 10)
-      this.formData.totalPage = res.data.items.length
-      this.listLoading = false
-    })
+    // getList().then(res => {
+    //   this.list = res.data.items.slice(0, 10)
+    //   this.formData.totalPage = res.data.items.length
+    //   this.listLoading = false
+    // })
   },
   methods: {
     onSubmit() {

@@ -13,7 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="账号"
+          placeholder="手机号或邮箱"
           name="username"
           type="text"
           tabindex="1"
@@ -30,7 +30,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="密码"
+          placeholder="输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -40,13 +40,29 @@
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
+      <!-- <el-form-item prop="password">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
+        <el-input
+          :key="passwordType"
+          ref="password"
+          v-model="loginForm.password"
+          :type="passwordType"
+          placeholder="确认密码"
+          name="password"
+          tabindex="2"
+          auto-complete="on"
+          @keyup.enter.native="handleLogin"
+        />
+        <span class="show-pwd" @click="showPwd">
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+        </span>
+      </el-form-item> -->
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
-      </div>
+      <!-- <el-button v-if="toLogin" :loading="loading" type="text" style="width:100%;" @click="toLogin=false">还没有账号？立即注册！</el-button> -->
+      <!-- <el-button v-else :loading="loading" type="text" style="width:100%;" @click="toLogin=true">返回登录</el-button> -->
 
     </el-form>
   </div>
@@ -59,7 +75,8 @@ export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
+      // if (!validUsername(value)) {
+      if (!value) {
         callback(new Error('请输入登录账号'))
       } else {
         callback()
@@ -73,9 +90,10 @@ export default {
       }
     }
     return {
+      toLogin: true,
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: 'root',
+        password: 'root'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

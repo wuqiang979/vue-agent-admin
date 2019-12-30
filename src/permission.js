@@ -19,6 +19,7 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
+  console.log(hasToken)
   if (hasToken) {
     if (to.path === '/login') {
       console.log(123)
@@ -26,7 +27,7 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
+      const hasGetUserInfo = store.getters.userData
       if (hasGetUserInfo) {
         next()
       } else {
@@ -47,7 +48,6 @@ router.beforeEach(async(to, from, next) => {
   } else {
     /* has no token*/
     if (whiteList.indexOf(to.path) !== -1) {
-      console.log(222222)
       // in the free login whitelist, go directly
       next()
     } else {
