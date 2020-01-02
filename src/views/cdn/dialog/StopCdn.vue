@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { putCdnPartIfo } from '@/api/cdn'
 
 export default {
   components: {},
@@ -29,6 +30,10 @@ export default {
     show: {
       type: Boolean,
       default: false
+    },
+    id: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -47,7 +52,10 @@ export default {
   },
   methods: {
     submitData() {
-      this.dialogVisible = false
+      putCdnPartIfo(this.id, {}).then(res => {
+        this.dialogVisible = false
+        this.$emit('update')
+      })
     }
   }
 }

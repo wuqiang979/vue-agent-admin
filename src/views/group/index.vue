@@ -6,12 +6,12 @@
           <el-form-item label="名称">
             <el-input v-model="form.name" />
           </el-form-item>
-          <el-form-item label="分组">
+          <!-- <el-form-item label="类型">
             <el-select v-model="form.region" placeholder="please select your zone">
               <el-option label="Zone one" value="shanghai" />
               <el-option label="Zone two" value="beijing" />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
             <el-button type="primary" @click="onSubmit">查询</el-button>
           </el-form-item>
@@ -20,16 +20,28 @@
       <Table
         :table-data="list"
         :table-columns="tableColumns"
-        :current-page="formData.page_index"
-        :page-size="formData.page_number"
+        :current-page="formData.offset"
+        :page-size="formData.limit"
         :total-page="formData.totalPage"
       >
-        <el-table-column slot="operate" label="操作" width="300" align="center">
+        <el-table-column slot="operate" label="操作" width="400" align="center">
           <template slot-scope="{ row }">
-            <el-button type="text" size="mini" @click="$router.push('edit-cdn/1')">查看转发</el-button>
-            <el-button type="text" size="mini" @click="showStopCdn=true">替换跳转地址</el-button>
-            <el-button type="text" size="mini">修改</el-button>
-            <el-button type="text" size="mini">删除</el-button>
+            <el-button type="primary" size="mini" @click="$router.push(`/cdn/site`)">查看转发</el-button>
+            <el-button type="warning" size="mini" @click="showStopCdn=true">替换跳转地址</el-button>
+            <el-button type="success" size="mini">修改</el-button>
+            <!-- <el-button type="text" size="mini">删除</el-button> -->
+            <el-popover
+              v-model="visible"
+              placement="top"
+              width="260"
+            >
+              <p>你将要 删除 分组 [{{ row.id }}] 确认操作吗?</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+              </div>
+              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </Table>
@@ -38,7 +50,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { getGroup } from '@/api/common'
 import Table from '@/components/Table'
 export default {
   components: {
@@ -48,6 +60,7 @@ export default {
     return {
       showStopCdn: false,
       showSetGroup: false,
+      visible: false,
       pickerOptions: {
         shortcuts: [
           {
@@ -91,39 +104,28 @@ export default {
         desc: ''
       },
       formData: {
-        page_index: 1,
-        page_number: 10,
+        offset: 1,
+        limit: 10,
         totalPage: 0
       },
       list: [],
       tableColumns: [
         {
-          type: 'selection',
+          label: 'ID',
+          prop: 'id',
           width: '95'
         },
         {
-          label: '集群',
-          prop: 'title'
+          label: '分组名称',
+          prop: 'name'
         },
         {
-          label: '域名',
-          prop: 'author'
-        },
-        {
-          label: '跳转地址',
-          prop: 'pageviews'
-        },
-        {
-          label: '所属分组',
-          prop: 'status'
+          label: '关联的跳转域名数量',
+          prop: 'name'
         },
         {
           label: '创建时间',
-          prop: 'display_time'
-        },
-        {
-          label: '状态',
-          prop: 'display_time'
+          prop: 'created'
         },
         {
           slot: 'operate'
@@ -132,11 +134,11 @@ export default {
     }
   },
   created() {
-    // getList().then(res => {
-    //   this.list = res.data.items.slice(0, 10)
-    //   this.formData.totalPage = res.data.items.length
-    //   this.listLoading = false
-    // })
+    getGroup().then(res => {
+      this.list = res.data.results
+      this.formData.totalPage = res.data.count
+      this.listLoading = false
+    })
   },
   methods: {
     onSubmit() {

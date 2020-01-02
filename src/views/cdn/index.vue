@@ -62,22 +62,27 @@
         :page-size="formData.page_number"
         :total-page="formData.totalPage"
       >
+        <el-table-column slot="operate" label="状态" align="center">
+          <template slot-scope="{ row }">
+            <el-switch v-model="row.to_index" disabled />
+          </template>
+        </el-table-column>
         <el-table-column slot="operate" label="操作" width="300" align="center">
           <template slot-scope="{ row }">
             <el-button type="success" size="mini" @click="$router.push('edit-cdn/1')">配置</el-button>
-            <el-button type="warning" size="mini" @click="showStopCdn=true">停用</el-button>
+            <el-button type="warning" size="mini" @click="operateId=row.id;showStopCdn=true">停用</el-button>
             <el-button type="danger" size="mini">删除</el-button>
           </template>
         </el-table-column>
       </Table>
     </el-card>
-    <StopCdn :show.sync="showStopCdn" />
+    <StopCdn :id="operateId" :show.sync="showStopCdn" @update="getCdnList" />
     <SetGroup :show.sync="showSetGroup" />
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { getCdns } from '@/api/cdn'
 import Table from '@/components/Table'
 import StopCdn from './dialog/StopCdn'
 import SetGroup from './dialog/SetGroup'
@@ -144,42 +149,40 @@ export default {
           type: 'selection',
           width: '95'
         },
-        {
-          label: '集群',
-          prop: 'title'
-        },
+        // {
+        //   label: '集群',
+        //   prop: 'group_name'
+        // },
         {
           label: '域名',
-          prop: 'author'
+          prop: 'match_domain'
         },
         {
           label: '跳转地址',
-          prop: 'pageviews'
+          prop: 'to_domain'
         },
         {
           label: '所属分组',
-          prop: 'status'
+          prop: 'group_name'
         },
         {
           label: '创建时间',
-          prop: 'display_time'
+          prop: 'updated'
         },
         {
-          label: '状态',
-          prop: 'display_time'
+          // label: '状态',
+          // prop: 'to_index'
+          slot: 'to_index'
         },
         {
           slot: 'operate'
         }
-      ]
+      ],
+      operateId: '' // 当前操作的cdn ID
     }
   },
   created() {
-    // getList().then(res => {
-    //   this.list = res.data.items.slice(0, 10)
-    //   this.formData.totalPage = res.data.items.length
-    //   this.listLoading = false
-    // })
+    this.getCdnList()
   },
   methods: {
     onSubmit() {
@@ -189,6 +192,14 @@ export default {
       this.$message({
         message: 'cancel!',
         type: 'warning'
+      })
+    },
+    // 获取cdn加速列表
+    getCdnList() {
+      getCdns(this.formData).then(res => {
+        this.list = res.data.results
+        this.formData.totalPage = res.data.count
+        this.listLoading = false
       })
     },
     deleteMany() {
