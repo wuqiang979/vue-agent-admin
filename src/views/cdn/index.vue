@@ -71,7 +71,17 @@
           <template slot-scope="{ row }">
             <el-button type="success" size="mini" @click="$router.push('edit-cdn/1')">配置</el-button>
             <el-button type="warning" size="mini" @click="operateId=row.id;showStopCdn=true">停用</el-button>
-            <el-button type="danger" size="mini">删除</el-button>
+            <el-popover
+              v-model="visible"
+              placement="top"
+            >
+              <p>你将要 删除 站点 <span style="color:red;">123.com</span> 确认操作吗?</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+              </div>
+              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </Table>
@@ -96,6 +106,7 @@ export default {
     return {
       showStopCdn: false,
       showSetGroup: false,
+      visible: false,
       pickerOptions: {
         shortcuts: [
           {

@@ -27,15 +27,14 @@
         <el-table-column slot="operate" label="操作" width="400" align="center">
           <template slot-scope="{ row }">
             <el-button type="primary" size="mini" @click="$router.push(`/cdn/site`)">查看转发</el-button>
-            <el-button type="warning" size="mini" @click="showStopCdn=true">替换跳转地址</el-button>
-            <el-button type="success" size="mini">修改</el-button>
+            <el-button type="warning" size="mini" @click="showReplaceUrl=true">替换跳转地址</el-button>
+            <el-button type="success" size="mini" @click="showModifyName=true">修改</el-button>
             <!-- <el-button type="text" size="mini">删除</el-button> -->
             <el-popover
               v-model="visible"
               placement="top"
-              width="260"
             >
-              <p>你将要 删除 分组 [{{ row.id }}] 确认操作吗?</p>
+              <p>你将要 删除 分组 <span style="color:red;">[{{ row.id }}] </span>确认操作吗?</p>
               <div style="text-align: right; margin: 0">
                 <el-button size="mini" type="text" @click="visible = false">取消</el-button>
                 <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
@@ -46,20 +45,26 @@
         </el-table-column>
       </Table>
     </el-card>
+    <ReplaceUrl :show.sync="showReplaceUrl" />
+    <ModifyName :show.sync="showModifyName" />
   </div>
 </template>
 
 <script>
 import { getGroup } from '@/api/common'
 import Table from '@/components/Table'
+import ReplaceUrl from './dialog/ReplaceUrl'
+import ModifyName from './dialog/ModifyName'
 export default {
   components: {
-    Table
+    Table,
+    ReplaceUrl,
+    ModifyName
   },
   data() {
     return {
-      showStopCdn: false,
-      showSetGroup: false,
+      showReplaceUrl: false,
+      showModifyName: false,
       visible: false,
       pickerOptions: {
         shortcuts: [
