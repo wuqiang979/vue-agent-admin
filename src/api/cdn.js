@@ -52,3 +52,11 @@ export function putCdnPartIfo(id, data) {
     data
   })
 }
+
+// 删除单条域名转发记录
+export function delCdn(id) {
+  return request({
+    url: `/domain/domain/${id}/`,
+    method: 'delete'
+  })
+}

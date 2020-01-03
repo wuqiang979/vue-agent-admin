@@ -1,33 +1,25 @@
+<!--
+ * @Author: 尼大人
+ * @Date: 2020-01-04 00:29:08
+ * @LastEditors  : 尼大人
+ * @LastEditTime : 2020-01-04 01:48:33
+ -->
 <template>
   <div class="app-container">
     <el-card>
       <div slot="header">
         <el-form ref="form" size="small" :model="form" :inline="true">
-          <el-form-item label="集群">
-            <el-input v-model="form.name" />
-          </el-form-item>
-          <el-form-item label="域名">
-            <el-input v-model="form.name" />
-          </el-form-item>
-          <el-form-item label="跳转地址">
-            <el-input v-model="form.name" />
+          <el-form-item label="关键词">
+            <el-input v-model="form.keyWord" />
           </el-form-item>
           <el-form-item label="分组">
-            <el-select v-model="form.region" placeholder="please select your zone">
-              <el-option label="Zone one" value="shanghai" />
-              <el-option label="Zone two" value="beijing" />
+            <el-select v-model="form.region" placeholder="请选着分组" clearable>
+              <el-option v-for="item in groupData" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
           <el-form-item label="状态">
-            <el-select v-model="form.region" placeholder="please select your zone">
-              <el-option label="Zone one" value="shanghai" />
-              <el-option label="Zone two" value="beijing" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="迁移状态">
-            <el-select v-model="form.region" placeholder="please select your zone">
-              <el-option label="Zone one" value="shanghai" />
-              <el-option label="Zone two" value="beijing" />
+            <el-select v-model="form.region" placeholder="请选着状态" clearable>
+              <el-option v-for="item in statusType" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-form-item label="创建日期">
@@ -64,21 +56,21 @@
       >
         <el-table-column slot="operate" label="状态" align="center">
           <template slot-scope="{ row }">
-            <el-switch v-model="row.to_index" disabled />
+            <el-switch v-model="row.status" disabled />
           </template>
         </el-table-column>
         <el-table-column slot="operate" label="操作" width="300" align="center">
           <template slot-scope="{ row }">
-            <el-button type="success" size="mini" @click="$router.push('edit-cdn/1')">配置</el-button>
+            <el-button type="success" size="mini" @click="$router.push(`edit-cdn/${row.id}`)">配置</el-button>
             <el-button type="warning" size="mini" @click="operateId=row.id;showStopCdn=true">停用</el-button>
             <el-popover
-              v-model="visible"
+              v-model="row.visible"
               placement="top"
             >
               <p>你将要 删除 站点 <span style="color:red;">123.com</span> 确认操作吗?</p>
               <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-                <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+                <el-button size="mini" type="text" @click="row.visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="delCdn(row)">确定</el-button>
               </div>
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popover>
@@ -92,7 +84,8 @@
 </template>
 
 <script>
-import { getCdns } from '@/api/cdn'
+import { getCdns, putCdnPartIfo, delCdn } from '@/api/cdn'
+import { getGroup } from '@/api/common'
 import Table from '@/components/Table'
 import StopCdn from './dialog/StopCdn'
 import SetGroup from './dialog/SetGroup'
@@ -107,6 +100,14 @@ export default {
       showStopCdn: false,
       showSetGroup: false,
       visible: false,
+      groupData: [], // 分组
+      statusType: [{
+        label: '启用',
+        value: '1'
+      }, {
+        label: '停用',
+        value: '2'
+      }],
       pickerOptions: {
         shortcuts: [
           {
@@ -183,7 +184,7 @@ export default {
         {
           // label: '状态',
           // prop: 'to_index'
-          slot: 'to_index'
+          slot: 'status'
         },
         {
           slot: 'operate'
@@ -194,6 +195,7 @@ export default {
   },
   created() {
     this.getCdnList()
+    this.getGroup()
   },
   methods: {
     onSubmit() {
@@ -205,14 +207,31 @@ export default {
         type: 'warning'
       })
     },
+    // 获取分组
+    getGroup() {
+      getGroup().then(res => {
+        this.groupData = res.data.results
+      })
+    },
     // 获取cdn加速列表
     getCdnList() {
       getCdns(this.formData).then(res => {
+        res.data.results.forEach(item => {
+          item.visible = false
+        })
         this.list = res.data.results
         this.formData.totalPage = res.data.count
         this.listLoading = false
       })
     },
+    // 单条删除
+    delCdn(rot) {
+      delCdn(rot.id).then(res => {
+        this.$message.success('删除成功')
+        this.getCdnList()
+      })
+    },
+    // 批量删除
     deleteMany() {
       this.$confirm('你将要批量删除选中的内容，操作不可恢复确认吗?', '操作提示', {
         confirmButtonText: '确定',

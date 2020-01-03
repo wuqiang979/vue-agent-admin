@@ -32,7 +32,7 @@ export default {
       default: false
     },
     id: {
-      type: String,
+      type: [String, Number],
       default: ''
     }
   },
@@ -52,7 +52,10 @@ export default {
   },
   methods: {
     submitData() {
-      putCdnPartIfo(this.id, {}).then(res => {
+      putCdnPartIfo(this.id, {
+        status: false,
+        stop_reason: 'types'
+      }).then(res => {
         this.dialogVisible = false
         this.$emit('update')
       })

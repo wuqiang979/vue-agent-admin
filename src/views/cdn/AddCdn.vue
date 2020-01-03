@@ -75,9 +75,9 @@ export default {
       formData: {
         match_domain: '',
         to_domain: '',
-        to_index: false,
+        status: false,
         group: '',
-        remark: '12345'
+        remark: 'test'
       }
     }
   },
@@ -89,7 +89,8 @@ export default {
   methods: {
     onSubmit() {
       addCdn(this.formData).then(res => {
-        console.log(res)
+        this.$message.success(res.message)
+        this.$router.push('site')
       })
     },
     onCancel() {
