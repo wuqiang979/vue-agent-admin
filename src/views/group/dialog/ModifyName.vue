@@ -1,19 +1,18 @@
 <template>
   <el-dialog
-    title="暂停加速"
+    title="更新分组"
     :visible.sync="dialogVisible"
-    width="600px"
+    width="500px"
     @close="$emit('update:show', false)"
   >
-    <div class="stop-cdn-content">
-      <p class="tip">请选择暂停服务的原因</p>
-      <el-radio-group v-model="types" size="medium">
-        <el-radio-button label="1">违规信息</el-radio-button>
-        <el-radio-button label="2">服务到期</el-radio-button>
-        <el-radio-button label="3">黑名单</el-radio-button>
-        <el-radio-button label="4">其他</el-radio-button>
-      </el-radio-group>
-    </div>
+    <el-form ref="el-form" :model="formData" size="medium" label-width="80px">
+      <el-form-item label="分组类型" required>
+        <span>域名转发</span>
+      </el-form-item>
+      <el-form-item label="分组名称" required>
+        <el-input v-model="formData.name" placeholder="分组名称不能为空" />
+      </el-form-item>
+    </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button size="small" @click="dialogVisible = false">取 消</el-button>
       <el-button size="small" type="primary" @click="submitData">确 定</el-button>
@@ -22,7 +21,6 @@
 </template>
 
 <script>
-import { putCdnPartIfo } from '@/api/cdn'
 
 export default {
   components: {},
@@ -30,16 +28,15 @@ export default {
     show: {
       type: Boolean,
       default: false
-    },
-    id: {
-      type: String,
-      default: ''
     }
   },
   data() {
     return {
       dialogVisible: false,
-      types: '1'
+      formData: {
+        oldUrl: '',
+        newUrl: ''
+      }
     }
   },
   watch: {
@@ -52,21 +49,20 @@ export default {
   },
   methods: {
     submitData() {
-      putCdnPartIfo(this.id, {}).then(res => {
+      if (this.formData.name) {
         this.dialogVisible = false
-        this.$emit('update')
-      })
+      } else {
+        this.$message.warning('请输入分组名称')
+      }
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.stop-cdn-content{
-  text-align: center;
-  .tip{
-    margin-bottom: 30px;
-  }
+.flex-box {
+  margin-bottom: 20px;
+  @include flex(flex-end);
 }
 </style>
 
