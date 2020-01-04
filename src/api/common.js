@@ -25,3 +25,29 @@ export function getGroupDetail(id) {
     method: 'get'
   })
 }
+
+// 修改分组部分信息
+export function patchGroupInfo(id, data) {
+  return request({
+    url: `/domain/group/${id}/`,
+    method: 'patch',
+    data
+  })
+}
+
+// 修改分组全部信息
+export function putGroupInfo(data) {
+  return request({
+    url: `/domain/group/${data.id}/`,
+    method: 'put',
+    data
+  })
+}
+
+// 删除分组记录
+export function delGroup(id) {
+  return request({
+    url: `/domain/group/${id}/`,
+    method: 'DELETE'
+  })
+}

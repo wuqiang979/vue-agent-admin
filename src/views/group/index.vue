@@ -2,9 +2,9 @@
   <div class="app-container">
     <el-card>
       <div slot="header">
-        <el-form ref="form" size="small" :model="form" :inline="true">
+        <el-form ref="formData" size="small" :model="formData" :inline="true">
           <el-form-item label="名称">
-            <el-input v-model="form.name" />
+            <el-input v-model="formData.name" />
           </el-form-item>
           <!-- <el-form-item label="类型">
             <el-select v-model="form.region" placeholder="please select your zone">
@@ -13,7 +13,10 @@
             </el-select>
           </el-form-item> -->
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button type="primary" @click="filterSearch">查询</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-plus" type="primary" @click="showAddGroup=true">添加</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -28,16 +31,16 @@
           <template slot-scope="{ row }">
             <el-button type="primary" size="mini" @click="$router.push(`/cdn/site`)">查看转发</el-button>
             <el-button type="warning" size="mini" @click="showReplaceUrl=true">替换跳转地址</el-button>
-            <el-button type="success" size="mini" @click="showModifyName=true">修改</el-button>
+            <el-button type="success" size="mini" @click="showModifyName=true;opereateData=row">修改</el-button>
             <!-- <el-button type="text" size="mini">删除</el-button> -->
             <el-popover
-              v-model="visible"
+              v-model="row._visible"
               placement="top"
             >
               <p>你将要 删除 分组 <span style="color:red;">[{{ row.id }}] </span>确认操作吗?</p>
               <div style="text-align: right; margin: 0">
-                <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-                <el-button type="primary" size="mini" @click="visible = false">确定</el-button>
+                <el-button size="mini" type="text" @click="row._visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="delGroup(row)">确定</el-button>
               </div>
               <el-button slot="reference" type="danger" size="mini">删除</el-button>
             </el-popover>
@@ -46,18 +49,22 @@
       </Table>
     </el-card>
     <ReplaceUrl :show.sync="showReplaceUrl" />
-    <ModifyName :show.sync="showModifyName" />
+    <ModifyName :show.sync="showModifyName" :opereate-data="opereateData" @update="getGroup" />
+    <ModifyName :show.sync="showModifyName" :opereate-data="opereateData" @update="getGroup" />
+    <AddGroup :show.sync="showAddGroup" @update="getGroup" />
   </div>
 </template>
 
 <script>
-import { getGroup } from '@/api/common'
+import { getGroup, delGroup } from '@/api/common'
 import Table from '@/components/Table'
+import AddGroup from './dialog/AddGroup'
 import ReplaceUrl from './dialog/ReplaceUrl'
 import ModifyName from './dialog/ModifyName'
 export default {
   components: {
     Table,
+    AddGroup,
     ReplaceUrl,
     ModifyName
   },
@@ -65,50 +72,11 @@ export default {
     return {
       showReplaceUrl: false,
       showModifyName: false,
+      showAddGroup: false,
       visible: false,
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
-      },
-      value2: '',
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
+      opereateData: {}, // 当前操作的分组ID
       formData: {
+        name: '',
         offset: 1,
         limit: 10,
         totalPage: 0
@@ -139,51 +107,31 @@ export default {
     }
   },
   created() {
-    getGroup().then(res => {
-      this.list = res.data.results
-      this.formData.totalPage = res.data.count
-      this.listLoading = false
-    })
+    this.getGroup()
   },
   methods: {
-    onSubmit() {
-      this.$message('submit!')
+    filterSearch() {
+      this.formData.offset = 1
+      this.getGroup()
     },
-    onCancel() {
-      this.$message({
-        message: 'cancel!',
-        type: 'warning'
+    getGroup() {
+      getGroup().then(res => {
+        res.data.results.forEach(item => {
+          item._visible = false
+        })
+        this.list = res.data.results
+        this.formData.totalPage = res.data.count
+        this.listLoading = false
       })
     },
-    deleteMany() {
-      this.$confirm('你将要批量删除选中的内容，操作不可恢复确认吗?', '操作提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            instance.confirmButtonText = '执行中...'
-            setTimeout(() => {
-              done()
-              setTimeout(() => {
-                instance.confirmButtonLoading = false
-              }, 300)
-            }, 3000)
-          } else {
-            done()
-          }
-        }
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
+    addGroup() {
+      // this.
+    },
+    delGroup(obj) {
+      delGroup(obj.id).then(res => {
+        this.$message.success(res.message)
+        obj._visible = false
+        this.getGroup()
       })
     }
   }

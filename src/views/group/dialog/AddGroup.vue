@@ -1,16 +1,13 @@
 <template>
   <el-dialog
-    title="更新分组"
+    title="添加分组"
     :visible.sync="dialogVisible"
-    width="500px"
+    width="400px"
     @close="$emit('update:show', false)"
   >
-    <el-form ref="el-form" :model="formData" size="medium" label-width="80px">
-      <el-form-item label="分组类型">
-        <span>域名转发</span>
-      </el-form-item>
-      <el-form-item label="分组名称" required>
-        <el-input v-model="formData.name" placeholder="分组名称不能为空" />
+    <el-form ref="el-form" :model="formData" size="medium">
+      <el-form-item label="分组名称" required label-width="80px">
+        <el-input v-model="formData.name" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -21,17 +18,13 @@
 </template>
 
 <script>
-import { patchGroupInfo } from '@/api/common'
+import { addGroup } from '@/api/common'
 export default {
   components: {},
   props: {
     show: {
       type: Boolean,
       default: false
-    },
-    opereateData: {
-      type: Object,
-      default: () => {}
     }
   },
   data() {
@@ -45,7 +38,6 @@ export default {
   watch: {
     show(value) {
       this.dialogVisible = value
-      this.formData.name = this.opereateData.name
     }
   },
   created() {
@@ -54,7 +46,7 @@ export default {
   methods: {
     submitData() {
       if (this.formData.name) {
-        patchGroupInfo(this.opereateData.id, this.formData).then(res => {
+        addGroup(this.formData).then(res => {
           this.dialogVisible = false
           this.$message.success(res.message)
           this.$emit('update')

@@ -15,7 +15,7 @@
           <el-input v-model="formData.to_domain" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-switch v-model="formData.to_index" />
+          <el-switch v-model="formData.status" />
         </el-form-item>
         <el-form-item>
           <el-button :loading="btnLoading" type="primary" @click="onSubmit">保存配置</el-button>
@@ -46,7 +46,7 @@ export default {
         match_domain: '',
         group: 10,
         to_domain: 0,
-        to_index: ''
+        status: ''
       },
       groupList: []
     }

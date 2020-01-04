@@ -8,17 +8,17 @@
   <div class="app-container">
     <el-card>
       <div slot="header">
-        <el-form ref="form" size="small" :model="form" :inline="true">
+        <el-form ref="form" size="small" :model="formData" :inline="true">
           <el-form-item label="关键词">
-            <el-input v-model="form.keyWord" />
+            <el-input v-model="formData.keyWord" />
           </el-form-item>
           <el-form-item label="分组">
-            <el-select v-model="form.region" placeholder="请选着分组" clearable>
+            <el-select v-model="formData.region" placeholder="请选着分组" clearable>
               <el-option v-for="item in groupData" :key="item.id" :label="item.name" :value="item.id" />
             </el-select>
           </el-form-item>
           <el-form-item label="状态">
-            <el-select v-model="form.region" placeholder="请选着状态" clearable>
+            <el-select v-model="formData.region" placeholder="请选着状态" clearable>
               <el-option v-for="item in statusType" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
@@ -35,7 +35,7 @@
             />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button type="primary" @click="filterSearch">查询</el-button>
           </el-form-item>
           <el-form-item>
             <el-button icon="el-icon-plus" type="primary" @click="$router.push('add-cdn')">添加</el-button>
@@ -140,20 +140,14 @@ export default {
         ]
       },
       value2: '',
-      form: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
-      },
       formData: {
-        page_index: 1,
-        page_number: 10,
-        totalPage: 0
+        // name: '',
+        // region: '',
+        // date1: '',
+        // date2: '',
+        // offset: 1,
+        // limit: 10,
+        // totalPage: 0
       },
       list: [],
       tableColumns: [
@@ -198,14 +192,9 @@ export default {
     this.getGroup()
   },
   methods: {
-    onSubmit() {
-      this.$message('submit!')
-    },
-    onCancel() {
-      this.$message({
-        message: 'cancel!',
-        type: 'warning'
-      })
+    filterSearch() {
+      this.formData.offset = 1
+      this.getCdnList()
     },
     // 获取分组
     getGroup() {
