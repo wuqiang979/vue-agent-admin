@@ -18,7 +18,7 @@
 </template>
 
 <script>
-
+import { addGroup } from '@/api/common'
 export default {
   components: {},
   props: {
@@ -46,7 +46,11 @@ export default {
   methods: {
     submitData() {
       if (this.formData.name) {
-        this.dialogVisible = false
+        addGroup(this.formData).then(res => {
+          this.dialogVisible = false
+          this.$message.success(res.message)
+          this.$emit('update')
+        })
       } else {
         this.$message.warning('请输入分组名称')
       }

@@ -51,3 +51,12 @@ export function delGroup(id) {
     method: 'DELETE'
   })
 }
+
+// 跳转链接批量替换
+export function replaceGroupUrl(data) {
+  return request({
+    url: `/domain/replace/`,
+    method: 'post',
+    data
+  })
+}

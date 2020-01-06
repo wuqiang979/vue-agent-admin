@@ -5,10 +5,11 @@
         ref="formData"
         size="medium"
         :model="formData"
+        :rules="formRules"
         label-width="80px"
         style="max-width: 500px;"
       >
-        <el-form-item label="分组">
+        <el-form-item label="分组" prop="group">
           <el-row>
             <el-col :xs="24" :sm="18">
               <el-select
@@ -29,10 +30,10 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="域名">
+        <el-form-item label="域名" prop="match_domain">
           <el-input v-model="formData.match_domain" />
         </el-form-item>
-        <el-form-item label="跳转到">
+        <el-form-item label="跳转到" prop="to_domain">
           <el-input v-model="formData.to_domain" />
         </el-form-item>
         <el-form-item label="状态">
@@ -51,7 +52,7 @@
       </el-form>
     </el-card>
     <!-- 添加分组 -->
-    <AddGroup :show.sync="showAddGroup" />
+    <AddGroup :show.sync="showAddGroup" @update="getGroup" />
     <!-- 批量添加 -->
     <AddCdns :show.sync="showAddCdns" />
   </div>
@@ -78,19 +79,33 @@ export default {
         status: false,
         group: '',
         remark: 'test'
+      },
+      formRules: {
+        match_domain: [{ required: true, message: '域名不能为空' }],
+        to_domain: [{ required: true, message: '跳转地址不能为空' }],
+        group: [{ required: true, message: '请选择分组' }]
       }
     }
   },
   created() {
-    getGroup().then(res => {
-      this.group = res.data.results
-    })
+    this.getGroup()
   },
   methods: {
+    getGroup() {
+      getGroup().then(res => {
+        this.group = res.data.results
+      })
+    },
     onSubmit() {
-      addCdn(this.formData).then(res => {
-        this.$message.success(res.message)
-        this.$router.push('site')
+      this.$refs['formData'].validate(valid => {
+        if (valid) {
+          addCdn(this.formData).then(res => {
+            this.$message.success(res.message)
+            this.$router.push('site')
+          })
+        } else {
+          this.$message.warning('请补全不填信息')
+        }
       })
     },
     onCancel() {

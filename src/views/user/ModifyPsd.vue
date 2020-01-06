@@ -10,23 +10,17 @@
             label-width="100px"
             style="max-width: 700px;"
           >
-            <el-form-item label="手机号码">
-              <el-input v-model="formData.phone" disabled />
+            <el-form-item label="原密码" prop="current_password">
+              <el-input v-model="formData.current_password" type="password" />
             </el-form-item>
-            <el-form-item label="邮箱">
-              <el-input disabled />
+            <el-form-item label="新密码" prop="new_password">
+              <el-input v-model="formData.new_password" type="password" />
             </el-form-item>
-            <el-form-item label="原密码">
-              <el-input type="password" />
-            </el-form-item>
-            <el-form-item label="新密码">
-              <el-input type="password" />
-            </el-form-item>
-            <el-form-item label="确认密码">
-              <el-input type="password" />
+            <el-form-item label="确认密码" prop="re_new_password">
+              <el-input v-model="formData.re_new_password" type="password" />
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" style="width:100%;">提交修改</el-button>
+              <el-button type="primary" style="width:100%;" @click="submit">提交修改</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -36,28 +30,68 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { modifyPsd } from '@/api/user'
 
 export default {
   filters: {},
   data() {
+    const newPsd = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('新密码不能为空'))
+      } else {
+        if (this.formData.re_new_password && this.formData.re_new_password !== this.formData.new_password) {
+          callback(new Error('新密码和确认密码不一致'))
+          this.formData.new_password = ''
+        } else {
+          callback()
+        }
+      }
+    }
+    const reNewPsd = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('确认密码不能为空'))
+      } else {
+        if (this.formData.new_password && this.formData.re_new_password !== this.formData.new_password) {
+          callback(new Error('新密码和确认密码不一致'))
+          this.formData.re_new_password = ''
+        } else {
+          callback()
+        }
+      }
+    }
     return {
       sex: 1,
       formData: {
-        phone: '',
-        username: '',
-        email: ''
+        current_password: '',
+        new_password: '',
+        re_new_password: ''
       },
       formRules: {
-
+        current_password: [{ required: true, message: '原始密码不能为空', trigger: 'blur' }],
+        new_password: [{ required: true, validator: newPsd, trigger: 'blur' }],
+        re_new_password: [{ required: true, validator: reNewPsd, trigger: 'blur' }]
       }
     }
   },
   computed: {
-    ...mapGetters(['userData'])
+
   },
-  created() {},
-  methods: {}
+  created() {
+
+  },
+  methods: {
+    submit() {
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          modifyPsd(this.formData).then(res => {
+            this.$message.success(res.message)
+          })
+        } else {
+          this.$message.warning('请填写必要信息')
+        }
+      })
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

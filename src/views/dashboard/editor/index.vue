@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
     <panel-group />
-    <el-card>
+    <!-- <el-card>
       <div slot="header">
         <span>{{ $t("home.title") }}</span>
       </div>
@@ -12,40 +12,27 @@
         :page-size="formData.page_number"
         :total-page="formData.totalPage"
       >
-        <el-table-column slot="is_active" label="是否激活" align="center">
+        <el-table-column slot="operate" label="操作" align="center">
           <template slot-scope="{ row }">
-            <span v-if="row.is_active">是</span>
-            <span v-else>否</span>
-          </template>
-        </el-table-column>
-        <el-table-column slot="is_superuser" label="管理员" align="center">
-          <template slot-scope="{ row }">
-            <span v-if="row.is_superuser">是</span>
-            <span v-else>否</span>
-          </template>
-        </el-table-column>
-        <el-table-column slot="operate" label="操作" align="center" width="260px">
-          <template slot-scope="{ row }">
-            <el-button type="primary" size="mini" @click="openDialog(0,row.userId)">设置密码</el-button>
-            <el-button type="info" size="mini" @click="openDialog(1,row.userId)">修改</el-button>
+            <el-button type="warning" size="mini" @click="openDialog(0,row.userId)">停用</el-button>
             <el-button type="danger" size="mini" @click="openDialog(1,row.userId)">删除</el-button>
           </template>
         </el-table-column>
       </Table>
-    </el-card>
+    </el-card> -->
   </div>
 </template>
 
 <script>
-import { getUserList } from '@/api/user'
+import { getList } from '@/api/table'
 import PanelGroup from './components/PanelGroup'
-import Table from '@/components/Table'
+// import Table from '@/components/Table'
 
 export default {
   name: 'DashboardAdmin',
   components: {
-    PanelGroup,
-    Table
+    PanelGroup
+    // Table
   },
   data() {
     return {
@@ -62,30 +49,24 @@ export default {
           width: '95'
         },
         {
-          label: '用户名',
-          prop: 'username'
+          label: '集群',
+          prop: 'title'
         },
         {
-          label: '手机号',
-          prop: 'phone'
+          label: '域名',
+          prop: 'author'
         },
         {
-          // label: '是否激活',
-          // prop: 'is_active'
-          slot: 'is_active'
+          label: '跳转地址',
+          prop: 'pageviews'
         },
         {
-          // label: '管理员',
-          // prop: 'is_superuser'
-          slot: 'is_superuser'
+          label: '所属分组',
+          prop: 'status'
         },
         {
-          label: '到期时间',
-          prop: 'valid_to_date'
-        },
-        {
-          label: '更新时间',
-          prop: 'valid_to_date'
+          label: '创建时间',
+          prop: 'display_time'
         },
         {
           slot: 'operate'
@@ -94,11 +75,11 @@ export default {
     }
   },
   created() {
-    getUserList().then(res => {
-      this.list = res.data.results
-      this.formData.totalPage = res.data.count
-      this.listLoading = false
-    })
+    // getList().then(response => {
+    //   this.list = response.data.items.slice(0, 10)
+    //   this.formData.totalPage = response.data.items.length
+    //   this.listLoading = false
+    // })
   },
   methods: {
     handleSetLineChartData(type) {

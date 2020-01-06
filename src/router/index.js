@@ -96,6 +96,8 @@ export const constantRoutes = [
   {
     path: '/user',
     component: Layout,
+    name: 'userManme',
+    hidden: true,
     children: [
       {
         path: 'list',

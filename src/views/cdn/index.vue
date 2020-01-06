@@ -45,7 +45,7 @@
       </div>
       <div class="operate-box">
         <el-button size="medium" type="danger" @click="deleteMany">批量删除</el-button>
-        <el-button size="medium" type="warning" @click="showSetGroup=true">设置分组</el-button>
+        <!-- <el-button size="medium" type="warning" @click="showSetGroup=true">设置分组</el-button> -->
       </div>
       <Table
         :table-data="list"
@@ -62,7 +62,8 @@
         <el-table-column slot="operate" label="操作" width="300" align="center">
           <template slot-scope="{ row }">
             <el-button type="success" size="mini" @click="$router.push(`edit-cdn/${row.id}`)">配置</el-button>
-            <el-button type="warning" size="mini" @click="operateId=row.id;showStopCdn=true">停用</el-button>
+            <el-button v-if="row.status" type="warning" size="mini" @click="operateId=row.id;showStopCdn=true">停用</el-button>
+            <el-button v-else :loading="btnLoading" type="warning" size="mini" @click="toWork(row.id)">启用</el-button>
             <el-popover
               v-model="row.visible"
               placement="top"
@@ -97,6 +98,7 @@ export default {
   },
   data() {
     return {
+      btnLoading: false, // 提交操作是按钮的状态
       showStopCdn: false,
       showSetGroup: false,
       visible: false,
@@ -168,6 +170,10 @@ export default {
           prop: 'to_domain'
         },
         {
+          label: '访问次数',
+          prop: 'visit'
+        },
+        {
           label: '所属分组',
           prop: 'group_name'
         },
@@ -217,6 +223,16 @@ export default {
     delCdn(rot) {
       delCdn(rot.id).then(res => {
         this.$message.success('删除成功')
+        this.getCdnList()
+      })
+    },
+    // 启用
+    toWork(id) {
+      this.btnLoading = true
+      putCdnPartIfo(id, {
+        status: true
+      }).then(res => {
+        this.btnLoading = false
         this.getCdnList()
       })
     },

@@ -30,7 +30,7 @@
         <el-table-column slot="operate" label="操作" width="400" align="center">
           <template slot-scope="{ row }">
             <el-button type="primary" size="mini" @click="$router.push(`/cdn/site`)">查看转发</el-button>
-            <el-button type="warning" size="mini" @click="showReplaceUrl=true">替换跳转地址</el-button>
+            <el-button type="warning" size="mini" @click="showReplaceUrl=true;opereateData=row">替换跳转地址</el-button>
             <el-button type="success" size="mini" @click="showModifyName=true;opereateData=row">修改</el-button>
             <!-- <el-button type="text" size="mini">删除</el-button> -->
             <el-popover
@@ -48,8 +48,7 @@
         </el-table-column>
       </Table>
     </el-card>
-    <ReplaceUrl :show.sync="showReplaceUrl" />
-    <ModifyName :show.sync="showModifyName" :opereate-data="opereateData" @update="getGroup" />
+    <ReplaceUrl :show.sync="showReplaceUrl" :opereate-data="opereateData" />
     <ModifyName :show.sync="showModifyName" :opereate-data="opereateData" @update="getGroup" />
     <AddGroup :show.sync="showAddGroup" @update="getGroup" />
   </div>
@@ -74,7 +73,7 @@ export default {
       showModifyName: false,
       showAddGroup: false,
       visible: false,
-      opereateData: {}, // 当前操作的分组ID
+      opereateData: {}, // 当前操作的分组对象
       formData: {
         name: '',
         offset: 1,

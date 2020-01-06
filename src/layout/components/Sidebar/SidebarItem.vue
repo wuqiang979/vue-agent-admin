@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import path from 'path'
 import { isExternal } from '@/utils/validate'
 import Item from './Item'
@@ -55,6 +56,16 @@ export default {
     // TODO: refactor with render function
     this.onlyOneChild = null
     return {}
+  },
+  computed: {
+    ...mapGetters([
+      'userData'
+    ])
+  },
+  created() {
+    if (this.item.name === 'userManme' && this.userData.is_superuser) {
+      this.item.hidden = false
+    }
   },
   methods: {
     hasOneShowingChild(children = [], parent) {

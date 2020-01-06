@@ -16,7 +16,6 @@ const mutations = {
     state.name = name
   },
   SET_USERDATA: (state, userData) => {
-    console.log(userData)
     state.userData = userData
   }
 }

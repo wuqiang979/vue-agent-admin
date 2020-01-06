@@ -5,12 +5,12 @@
     width="500px"
     @close="$emit('update:show', false)"
   >
-    <el-form ref="el-form" :model="formData" size="medium" label-width="100px">
-      <el-form-item label="旧跳转地址" required>
-        <el-input v-model="formData.oldUrl" placeholder="旧跳转地址不能为空" />
+    <el-form ref="elForm" :model="formData" :rules="formRules" size="medium" label-width="100px">
+      <el-form-item label="旧跳转地址" prop="old_url">
+        <el-input v-model="formData.old_url" placeholder="旧跳转地址不能为空" />
       </el-form-item>
-      <el-form-item label="新跳转地址" required>
-        <el-input v-model="formData.newUrl" placeholder="新跳转地址不能为空" />
+      <el-form-item label="新跳转地址" prop="new_url">
+        <el-input v-model="formData.new_url" placeholder="新跳转地址不能为空" />
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -21,27 +21,45 @@
 </template>
 
 <script>
-
+import { replaceGroupUrl } from '@/api/common'
 export default {
   components: {},
   props: {
     show: {
       type: Boolean,
       default: false
+    },
+    opereateData: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
   data() {
     return {
       dialogVisible: false,
       formData: {
-        oldUrl: '',
-        newUrl: ''
+        group: '',
+        old_url: '',
+        new_url: ''
+      },
+      formRules: {
+        old_url: [
+          { required: true, message: '请输入旧跳转地址', trigger: 'blur' }
+        ],
+        new_url: [
+          { required: true, message: '请输入新跳转地址', trigger: 'blur' }
+        ]
       }
     }
   },
   watch: {
     show(value) {
       this.dialogVisible = value
+      if (value) {
+        this.formData.group = this.opereateData.id
+      }
     }
   },
   created() {
@@ -49,11 +67,16 @@ export default {
   },
   methods: {
     submitData() {
-      if (this.formData.name) {
-        this.dialogVisible = false
-      } else {
-        this.$message.warning('请输入分组名称')
-      }
+      this.$refs['elForm'].validate(valid => {
+        if (valid) {
+          replaceGroupUrl(this.formData).then(res => {
+            this.$message.success(res.message)
+            this.dialogVisible = false
+          })
+        } else {
+          this.$message.warning('请补全必要信息')
+        }
+      })
     }
   }
 }
