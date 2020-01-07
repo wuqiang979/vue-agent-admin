@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 首页统计数据
+export function summary() {
+  return request({
+    url: '/domain/summary/',
+    method: 'get'
+  })
+}
+
 // 添加分组记录(单条)
 export function addGroup(data) {
   return request({

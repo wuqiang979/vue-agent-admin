@@ -9,7 +9,7 @@
           <div class="card-panel-text">
             分组数量
           </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="summaryData.group_cnt" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -22,7 +22,7 @@
           <div class="card-panel-text">
             域名转发数量
           </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="summaryData.domain_cnt" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -35,7 +35,7 @@
           <div class="card-panel-text">
             总访问次数
           </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <count-to :start-val="0" :end-val="summaryData.visit_cnt" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
@@ -43,10 +43,21 @@
 </template>
 
 <script>
+import { summary } from '@/api/common'
 import CountTo from 'vue-count-to'
 export default {
   components: {
     CountTo
+  },
+  data() {
+    return {
+      summaryData: {}
+    }
+  },
+  created() {
+    summary().then(res => {
+      this.summaryData = res.data
+    })
   },
   methods: {
     handleSetLineChartData(type) {

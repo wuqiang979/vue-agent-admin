@@ -70,9 +70,9 @@ export function getUserData(id) {
 }
 
 // 编辑用户信息
-export function putUserData(data) {
+export function putUserData(id, data) {
   return request({
-    url: `/user/user/${data.id}/`,
+    url: `/user/user/${id}/`,
     method: 'PATCH',
     data
   })

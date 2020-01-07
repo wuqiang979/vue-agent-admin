@@ -52,6 +52,7 @@ export default {
   methods: {
     submitData() {
       putUserData(this.operateId, this.formData).then(res => {
+        this.$message.success(res.message)
         this.dialogVisible = false
       })
     }
