@@ -71,7 +71,8 @@ service.interceptors.response.use(
         // })
         this.$router.push(`/login?redirect=${this.$route.fullPath}`)
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return res
+      // return Promise.reject(new Error(res.message || 'Error'))
     } else {
       return res
     }

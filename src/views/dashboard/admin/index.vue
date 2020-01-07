@@ -26,29 +26,44 @@
         </el-table-column>
         <el-table-column slot="operate" label="操作" align="center" width="260px">
           <template slot-scope="{ row }">
-            <el-button type="primary" size="mini" @click="openDialog(0,row.userId)">设置密码</el-button>
-            <el-button type="info" size="mini" @click="openDialog(1,row.userId)">修改</el-button>
-            <el-button type="danger" size="mini" @click="openDialog(1,row.userId)">删除</el-button>
+            <el-button type="primary" size="mini" @click="showResetPsd=true;operateId=row.id">重置密码</el-button>
+            <el-button type="info" size="mini" @click="$router.push(`/user/edit-user/${row.id}`)">修改</el-button>
+            <el-popover v-model="row._visible" placement="top">
+              <p>
+                你将要删除用户
+                <span style="color:red;">{{ row.username }}</span>确认操作吗?
+              </p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="row._visible = false">取消</el-button>
+                <el-button type="primary" size="mini" @click="delUser(row)">确定</el-button>
+              </div>
+              <el-button slot="reference" type="danger" size="mini">删除</el-button>
+            </el-popover>
           </template>
         </el-table-column>
       </Table>
+      <ResetPsd :show.sync="showResetPsd" :operate-id="operateId" />
     </el-card>
   </div>
 </template>
 
 <script>
-import { getUserList } from '@/api/user'
+import { getUserList, delUser } from '@/api/user'
 import PanelGroup from './components/PanelGroup'
 import Table from '@/components/Table'
+import ResetPsd from '@/views/user/dialog/ResetPsd'
 
 export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
-    Table
+    Table,
+    ResetPsd
   },
   data() {
     return {
+      showResetPsd: false,
+      operateId: '',
       list: [],
       formData: {
         page_index: 1,
@@ -103,6 +118,13 @@ export default {
   methods: {
     handleSetLineChartData(type) {
       // this.lineChartData = lineChartData[type]
+    },
+    // 单条删除
+    delUser(rot) {
+      delUser(rot.id).then(res => {
+        this.$message.success('删除成功')
+        this.fetchData()
+      })
     }
   }
 }

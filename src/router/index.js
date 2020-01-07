@@ -51,7 +51,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '主页', icon: 'dashboard', affix: true }
+      meta: { title: 'dashboard', icon: 'dashboard', affix: true }
     }]
   },
 
@@ -63,20 +63,20 @@ export const constantRoutes = [
         path: 'site',
         name: 'site',
         component: () => import('@/views/cdn/index'),
-        meta: { title: '域名转发', icon: 'form' }
+        meta: { title: 'cdnTurn', icon: 'form' }
       },
       {
         path: 'add-cdn',
         name: 'addCdn',
         component: () => import('@/views/cdn/AddCdn'),
-        meta: { title: '添加转发', icon: 'form' },
+        meta: { title: 'addTurn', icon: 'form' },
         hidden: true
       },
       {
         path: 'edit-cdn/:id',
         name: 'editCdn',
         component: () => import('@/views/cdn/EditCdn'),
-        meta: { title: '转发配置', icon: 'form' },
+        meta: { title: 'turnConfig', icon: 'form' },
         hidden: true
       }
     ]
@@ -89,7 +89,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'group',
         component: () => import('@/views/group/index'),
-        meta: { title: '分组管理', icon: 'nested' }
+        meta: { title: 'groupManage', icon: 'nested' }
       }
     ]
   },
@@ -103,20 +103,34 @@ export const constantRoutes = [
         path: 'list',
         name: 'list',
         component: () => import('@/views/user/index'),
-        meta: { title: '用户管理', icon: 'example' }
+        meta: { title: 'userManage', icon: 'example' }
       },
       {
         path: 'account-info',
         name: 'accountInfo',
         component: () => import('@/views/user/AccountInfo'),
-        meta: { title: '账号信息', icon: 'tree' },
+        meta: { title: 'countInfo', icon: 'tree' },
         hidden: true
       },
       {
         path: 'modify-psd',
         name: 'modifyPsd',
         component: () => import('@/views/user/ModifyPsd'),
-        meta: { title: '修改密码', icon: 'tree' },
+        meta: { title: 'modifyPsd', icon: 'tree' },
+        hidden: true
+      },
+      {// 新增用户
+        path: 'add-user',
+        name: 'addUser',
+        component: () => import('@/views/user/AddUser'),
+        meta: { title: 'addUser', icon: 'tree' },
+        hidden: true
+      },
+      {// 编辑用户
+        path: 'edit-user/:userId',
+        name: 'editUser',
+        component: () => import('@/views/user/EditUser'),
+        meta: { title: '编辑用户', icon: 'tree' },
         hidden: true
       }
     ]

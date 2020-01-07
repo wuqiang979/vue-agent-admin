@@ -43,11 +43,45 @@ export function modifyPsd(data) {
   })
 }
 
+// 创建用户
+export function createUser(data) {
+  return request({
+    url: `/user/user/`,
+    method: 'post',
+    data
+  })
+}
+
 // 获取用户列表
 export function getUserList(params) {
   return request({
     url: `/user/user/`,
     method: 'get',
     params
+  })
+}
+
+// 获取用户详情
+export function getUserData(id) {
+  return request({
+    url: `/user/user/${id}/`,
+    method: 'get'
+  })
+}
+
+// 编辑用户信息
+export function putUserData(data) {
+  return request({
+    url: `/user/user/${data.id}/`,
+    method: 'PATCH',
+    data
+  })
+}
+
+// 删除用户
+export function delUser(id) {
+  return request({
+    url: `/user/user/${id}/`,
+    method: 'DELETE'
   })
 }
